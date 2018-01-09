@@ -11,19 +11,29 @@ import static org.hamcrest.MatcherAssert.assertThat
 class ModeIntegrationTest {
 
     @Test
-    void testDefaultIsToReplaceAllTestTasks() throws Exception {
+    void testDefaultIsToPrependScalaTestTasks() throws Exception {
         setupBuild()
                 .forTasks('clean', 'test', 'integrationTest')
                 .run()
-        assertThat(testReport, isScalaTestReport)
-        assertThat(integrationTestReport, isScalaTestReport)
+        assertThat(scalaTestReport, isScalaTestReport)
+        assertThat(testReport, isJUnitReport)
+        assertThat(integrationTestReport, isJUnitReport)
     }
-
 
     @Test
     void testAppendScalaTestTask() throws Exception {
         setupBuild(ScalaTestPlugin.Mode.append)
                 .forTasks('clean', 'test', 'integrationTest', 'scalatest')
+                .run()
+        assertThat(scalaTestReport, isScalaTestReport)
+        assertThat(testReport, isJUnitReport)
+        assertThat(integrationTestReport, isJUnitReport)
+    }
+
+    @Test
+    void testPrependScalaTestTask() throws Exception {
+        setupBuild(ScalaTestPlugin.Mode.prepend)
+                .forTasks('clean', 'test', 'integrationTest')
                 .run()
         assertThat(scalaTestReport, isScalaTestReport)
         assertThat(testReport, isJUnitReport)

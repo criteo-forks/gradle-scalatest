@@ -115,9 +115,7 @@ test {
 
 Other Frameworks
 ----------------
-The default behaviour is to replace all `Test` tasks with a scalatest implementation.
-
-This may not be appropriate if you are migrating an existing project to scalatest.
+The default behaviour is to inject the task "scalatest" just before the `Test` task named "test".
 
 The `com.github.maiflai.gradle-scalatest.mode` property may be configured to support the following behaviour:
 
@@ -126,6 +124,7 @@ The `com.github.maiflai.gradle-scalatest.mode` property may be configured to sup
 |replaceAll   |replace all instances of the `Test` task               |
 |replaceOne   |replace only the `Test` task named "test"              |
 |append       |create a new scalatest `Test` task named "scalatest"   |
+|prepend      |create a new scalatest `Test` task named "scalatest" automatically called before task named "test" |
 
 It's probably easiest to set this in a gradle.properties file at the root of your project.
 

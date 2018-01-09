@@ -28,7 +28,7 @@ class ScalaTestActionTest {
     }
 
     private static org.gradle.api.tasks.testing.Test testTask() {
-        testProject().tasks.test as org.gradle.api.tasks.testing.Test
+        testProject().tasks.scalatest as org.gradle.api.tasks.testing.Test
     }
 
     private static List<String> commandLine(org.gradle.api.tasks.testing.Test task) {

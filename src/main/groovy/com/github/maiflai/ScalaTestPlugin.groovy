@@ -17,7 +17,7 @@ class ScalaTestPlugin implements Plugin<Project> {
 
     static String MODE = 'com.github.maiflai.gradle-scalatest.mode'
     static enum Mode {
-        replaceAll, replaceOne, append
+        replaceAll, replaceOne, append, prepend
     }
 
     @Override
@@ -38,18 +38,26 @@ class ScalaTestPlugin implements Plugin<Project> {
                     }
                     break
                 case Mode.append:
-                    configure(t.tasks.create(
-                            name: 'scalatest', type: Test, group: 'verification',
-                            description: 'Run scalatest unit tests',
-                            dependsOn: t.tasks.testClasses) as Test)
+                    configure(createScalatestTask(t))
                     break
+                case Mode.prepend:
+                    def scalatest = createScalatestTask(t)
+                    configure(scalatest)
+                    t.tasks.getByName(JavaPlugin.TEST_TASK_NAME).dependsOn(scalatest)
             }
         }
     }
 
+    private static Test createScalatestTask(Project t) {
+        return t.tasks.create(
+                            name: 'scalatest', type: Test, group: 'verification',
+                            description: 'Run scalatest unit tests',
+                            dependsOn: t.tasks.testClasses) as Test
+    }
+
     private static Mode getMode(Project t) {
         if (!t.hasProperty(MODE)) {
-            return Mode.replaceAll
+            return Mode.prepend
         } else {
             return Mode.valueOf(t.properties[MODE].toString())
         }
