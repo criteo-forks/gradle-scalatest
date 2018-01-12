@@ -7,7 +7,7 @@ apply plugin: 'groovy'
 publishing {
     repositories {
         maven {
-            url project.hasProperty('publishUrl') ? publishUrl : "http://build-nexus.crto.in/content/repositories/criteo.thirdparty"
+            url project.hasProperty('publishUrl') ? publishUrl : "http://build-nexus.crto.in/repository/criteo.thirdparty"
             credentials {
                 username = System.getenv('MAVEN_USER')
                 password = System.getenv('MAVEN_PASSWORD')
@@ -23,9 +23,8 @@ repositories {
     }
 }
 
-jar.baseName = 'gradle-scalatest'
 group = 'com.github.maiflai'
-if (project.version == 'unspecified') {
+if (version == 'unspecified') {
     version = '0.1-SNAPSHOT'
 }
 
