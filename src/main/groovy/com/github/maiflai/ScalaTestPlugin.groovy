@@ -24,7 +24,6 @@ class ScalaTestPlugin implements Plugin<Project> {
     void apply(Project t) {
         if (!t.plugins.hasPlugin(ScalaTestPlugin)) {
             t.plugins.add(this)
-            t.plugins.apply(JavaPlugin)
             t.plugins.apply(ScalaPlugin)
             switch (getMode(t)) {
                 case Mode.replaceAll:
