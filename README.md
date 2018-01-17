@@ -6,7 +6,7 @@ Getting started
 ---------------
 http://plugins.gradle.org/plugin/com.github.maiflai.scalatest
 
-This replaces the existing test task actions with a scalatest implementation (see [Other Frameworks](#other-frameworks) below).
+It prepends the test task provided by the scalatest plugin to the existing test task (see [Other Frameworks](#other-frameworks) below).
 
 In addition to your `testCompile` dependency on scalatest, you also require a `testRuntime` dependency on pegdown in
 order to create the HTML report.
