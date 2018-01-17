@@ -12,6 +12,7 @@ import org.gradle.api.tasks.util.PatternSet
 import org.gradle.internal.UncheckedException
 import org.gradle.process.internal.DefaultJavaExecAction
 import org.gradle.process.internal.JavaExecAction
+import org.codehaus.plexus.util.cli.CommandLineUtils
 
 /**
  * <p>Designed to replace the normal Test Action with a new JavaExecAction
@@ -24,6 +25,7 @@ class ScalaTestAction implements Action<Test> {
     static String TAGS = 'tags'
     static String SUITES = '_suites'
     static String CONFIG = '_config'
+    static String ARGLINES = '_argLines'
 
     @Override
     void execute(Test t) {
@@ -179,6 +181,10 @@ class ScalaTestAction implements Action<Test> {
         def config = t.extensions.findByName(CONFIG) as Map<String, ?>
         config?.entrySet()?.each { entry ->
             args.add("-D${entry.key}=${entry.value}")
+        }
+        def argLines = t.extensions.findByName(ARGLINES) as List<String>
+        argLines?.collect { CommandLineUtils.translateCommandline(it) }.flatten().each {
+            args.add(it.trim())
         }
         return args
     }

@@ -113,6 +113,21 @@ test {
 }
 ```
 
+ArgLine
+-------
+Alternatively, you can append additional configuration to Scalatest with the `argLine` option. The whole lines will be appended at the end of the `JavaExec` task.
+
+```groovy 
+test {
+    argLine '-Ddb.name=testdb -X'
+    argLine '''\
+        -Dserver=192.168.1.188
+        -d64
+        -classpath $PATH
+    '''
+}
+```
+
 Other Frameworks
 ----------------
 The default behaviour is to inject the task "scalatest" just before the `Test` task named "test".

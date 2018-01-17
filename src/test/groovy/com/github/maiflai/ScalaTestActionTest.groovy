@@ -144,6 +144,35 @@ class ScalaTestActionTest {
     }
 
     @Test
+    void argLineIsAdded() throws Exception {
+        Task test = testTask()
+        test.configure({
+            argLine '-classpath /tmp'
+            argLine '-Dbob=rita -Xmx123m'
+        })
+        assertThat(commandLine(test), hasItem("-classpath"))
+        assertThat(commandLine(test), hasItem("/tmp"))
+        assertThat(commandLine(test), hasItem('-Dbob=rita'))
+        assertThat(commandLine(test), hasItem("-Xmx123m"))
+    }
+
+    @Test
+    void argLineMultilineIsAdded() throws Exception {
+        Task test = testTask()
+        test.configure({
+            argLine '''\
+                -classpath /tmp
+                -Dbob=rita
+                -Xmx123m
+            '''
+        })
+        assertThat(commandLine(test), hasItem("-classpath"))
+        assertThat(commandLine(test), hasItem("/tmp"))
+        assertThat(commandLine(test), hasItem('-Dbob=rita'))
+        assertThat(commandLine(test), hasItem("-Xmx123m"))
+    }
+
+    @Test
     void parallelDefaultsToProcessorCount() throws Exception {
         Task test = testTask()
         int processors = Runtime.runtime.availableProcessors()
