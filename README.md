@@ -107,7 +107,7 @@ test {
 ```groovy 
 test {
     configMap([
-        'db.name': 'testdb'
+        'db.name': 'testdb',
         'server': '192.168.1.188'
         ])
 }
