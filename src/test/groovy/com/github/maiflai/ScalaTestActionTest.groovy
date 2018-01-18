@@ -172,6 +172,26 @@ class ScalaTestActionTest {
         assertThat(commandLine(test), hasItem("-Xmx123m"))
     }
 
+    private static void checkSuffixTranslation(String message, Closure<Task> task, List<String> suffixes) {
+        Task test = testTask()
+        test.configure(task)
+        def args = commandLine(test)
+        suffixes.each {
+            assertThat(message, args, hasOption('-q', it))
+        }
+    }
+
+    @Test
+    void suffixIsTranslatedToS() throws Exception {
+        checkSuffixTranslation('simple suffix', { it.suffix '(?<!Integration)(Test|Spec)' }, ['(?<!Integration)(Test|Spec)'])
+        checkSuffixTranslation('multiple calls', { it.suffix 'Spec'; it.suffix 'IT' }, ['Spec', 'IT'])
+    }
+
+    @Test
+    void suffixesAreTranslatedToS() throws Exception {
+        checkSuffixTranslation('list of suffixes', { it.suffixes 'Spec', 'IT' }, ['Spec', 'IT'])
+    }
+
     @Test
     void parallelDefaultsToProcessorCount() throws Exception {
         Task test = testTask()

@@ -26,6 +26,7 @@ class ScalaTestAction implements Action<Test> {
     static String SUITES = '_suites'
     static String CONFIG = '_config'
     static String ARGLINES = '_argLines'
+    static String SUFFIXES = '_suffixes'
 
     @Override
     void execute(Test t) {
@@ -185,6 +186,11 @@ class ScalaTestAction implements Action<Test> {
         def argLines = t.extensions.findByName(ARGLINES) as List<String>
         argLines?.collect { CommandLineUtils.translateCommandline(it) }.flatten().each {
             args.add(it.trim())
+        }
+        def suffixes = t.extensions.findByName(SUFFIXES) as List<String>
+        suffixes?.toSet()?.each {
+            args.add('-q')
+            args.add(it)
         }
         return args
     }

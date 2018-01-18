@@ -75,6 +75,19 @@ task userStories(type: Test) {
 }
 ```
 
+Suffixes
+------
+You can specify suffixes of `Suite` names to discover. We directly map `-q` option of the [scala runner](http://www.scalatest.org/user_guide/using_the_runner#specifyingSuffixesToDiscover)
+```groovy
+task userStories(type: Test) {
+    suffix 'Spec'
+    suffix 'Suite'
+    // Equivalent to:
+    // suffix 'Spec|Suite'
+    // suffixes 'Spec', 'Suite'
+}
+```
+
 Filtering
 ---------
 Scalatest provides a simplified wildcard syntax for selecting tests. 

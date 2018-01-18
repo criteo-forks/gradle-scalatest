@@ -82,6 +82,10 @@ class ScalaTestPlugin implements Plugin<Project> {
         List<String> argLines = []
         test.extensions.add(ScalaTestAction.ARGLINES, argLines)
         test.extensions.add("argLine", { String name -> argLines.add(name) })
+        List<String> suffixes = []
+        test.extensions.add(ScalaTestAction.SUFFIXES, suffixes)
+        test.extensions.add("suffix", { String name -> suffixes.add(name) })
+        test.extensions.add("suffixes", { String... name -> suffixes.addAll(name) })
         test.testLogging.events = TestLogEvent.values() as Set
     }
 }
