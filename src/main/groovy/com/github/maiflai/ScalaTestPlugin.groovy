@@ -19,29 +19,30 @@ class ScalaTestPlugin implements Plugin<Project> {
     static enum Mode {
         replaceAll, replaceOne, append, prepend
     }
+    BackwardsCompatibleJavaExecActionFactory factory
 
     @Override
     void apply(Project t) {
         if (!t.plugins.hasPlugin(ScalaTestPlugin)) {
-            t.plugins.add(this)
+            factory = new BackwardsCompatibleJavaExecActionFactory(t.gradle.gradleVersion)
             t.plugins.apply(ScalaPlugin)
             switch (getMode(t)) {
                 case Mode.replaceAll:
-                    t.tasks.withType(Test) { configure(it) }
+                    t.tasks.withType(Test) { configure(it, factory) }
                     break
                 case Mode.replaceOne:
                     t.tasks.withType(Test) {
                         if (it.name == JavaPlugin.TEST_TASK_NAME) {
-                            configure(it)
+                            configure(it, factory)
                         }
                     }
                     break
                 case Mode.append:
-                    configure(createScalatestTask(t))
+                    configure(createScalatestTask(t), factory)
                     break
                 case Mode.prepend:
                     def scalatest = createScalatestTask(t)
-                    configure(scalatest)
+                    configure(scalatest, factory)
                     t.tasks.getByName(JavaPlugin.TEST_TASK_NAME).dependsOn(scalatest)
             }
         }
@@ -62,12 +63,12 @@ class ScalaTestPlugin implements Plugin<Project> {
         }
     }
 
-    static void configure(Test test) {
+    static void configure(Test test, BackwardsCompatibleJavaExecActionFactory factory) {
         test.maxParallelForks = Runtime.runtime.availableProcessors()
         //noinspection GroovyAssignabilityCheck
         test.actions = [
                 new JacocoTestAction(),
-                new ScalaTestAction()
+                new ScalaTestAction(factory)
         ]
         test.testLogging.exceptionFormat = TestExceptionFormat.SHORT
         test.extensions.add(ScalaTestAction.TAGS, new PatternSet())
