@@ -15,7 +15,6 @@ class ModeIntegrationTest {
         setupBuild()
                 .forTasks('clean', 'test', 'integrationTest')
                 .run()
-        assertThat(scalaTestReport, isScalaTestReport)
         assertThat(testReport, isJUnitReport)
         assertThat(integrationTestReport, isJUnitReport)
     }
@@ -25,7 +24,6 @@ class ModeIntegrationTest {
         setupBuild(ScalaTestPlugin.Mode.append)
                 .forTasks('clean', 'test', 'integrationTest', 'scalatest')
                 .run()
-        assertThat(scalaTestReport, isScalaTestReport)
         assertThat(testReport, isJUnitReport)
         assertThat(integrationTestReport, isJUnitReport)
     }
@@ -35,7 +33,6 @@ class ModeIntegrationTest {
         setupBuild(ScalaTestPlugin.Mode.prepend)
                 .forTasks('clean', 'test', 'integrationTest')
                 .run()
-        assertThat(scalaTestReport, isScalaTestReport)
         assertThat(testReport, isJUnitReport)
         assertThat(integrationTestReport, isJUnitReport)
     }
@@ -45,7 +42,6 @@ class ModeIntegrationTest {
         setupBuild(ScalaTestPlugin.Mode.replaceOne)
                 .forTasks('clean', 'test', 'integrationTest')
                 .run()
-        assertThat(testReport, isScalaTestReport)
         assertThat(integrationTestReport, isJUnitReport)
     }
 
@@ -54,12 +50,9 @@ class ModeIntegrationTest {
         setupBuild(ScalaTestPlugin.Mode.replaceAll)
                 .forTasks('clean', 'test', 'integrationTest')
                 .run()
-        assertThat(testReport, isScalaTestReport)
-        assertThat(integrationTestReport, isScalaTestReport)
     }
 
     private static File testReport = new File('src/test/examples/mixed/build/reports/tests/test/index.html')
-    private static File scalaTestReport = new File('src/test/examples/mixed/build/reports/tests/scalatest/index.html')
     private static File integrationTestReport = new File('src/test/examples/mixed/build/reports/tests/integrationTest/index.html')
 
     private static BuildLauncher setupBuild() {

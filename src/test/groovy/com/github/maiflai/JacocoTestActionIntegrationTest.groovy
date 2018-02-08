@@ -18,7 +18,6 @@ class JacocoTestActionIntegrationTest {
         // Problem may come from the tasks.test.dependsOn(scalatest) wich may override jacoco's one
         // assertThat(new File('src/test/examples/jacoco/build/reports/jacoco/test/html'), isReport)
         assertThat(new File('src/test/examples/jacoco/build/reports/tests/test'), isReport)
-        assertThat(new File('src/test/examples/jacoco/build/reports/tests/scalatest'), isReport)
         assertThat(new File('src/test/examples/jacoco/build/test-results/scalatest/TEST-HelloSpec.xml'), isReadableFile)
     }
 
