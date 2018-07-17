@@ -39,7 +39,7 @@ gradlePlugin {
     plugins {
         scalatestPlugin {
             id = group + '.scalatest'
-            implementationClass = group + '.ScalaTestPlugin'
+            implementationClass = 'com.github.maiflai.ScalaTestPlugin'
         }
     }
 }
