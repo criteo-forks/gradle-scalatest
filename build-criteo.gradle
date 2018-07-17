@@ -23,7 +23,7 @@ repositories {
     }
 }
 
-group = 'com.github.maiflai'
+group = 'com.criteo'
 if (version == 'unspecified') {
     version = '0.1-SNAPSHOT'
 }
