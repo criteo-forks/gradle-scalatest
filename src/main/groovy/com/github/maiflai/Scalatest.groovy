@@ -1,5 +1,6 @@
 package com.github.maiflai
 
+import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
@@ -14,6 +15,12 @@ class Scalatest extends Test {
 
     public Scalatest() {
         this(null)
+    }
+
+    @Override
+    @TaskAction
+    public void executeTests() {
+        // Don't run tests with regular runner
     }
 
     protected static void configure(Test test, BackwardsCompatibleJavaExecActionFactory factory) {
