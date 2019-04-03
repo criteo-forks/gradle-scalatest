@@ -11,6 +11,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.api.tasks.util.PatternSet
 import org.gradle.internal.UncheckedException
+import org.gradle.process.internal.DefaultExecActionFactory
 import org.gradle.process.internal.JavaExecAction
 import org.codehaus.plexus.util.cli.CommandLineUtils
 
@@ -28,11 +29,10 @@ class ScalaTestAction implements Action<Test> {
     static String CONFIG = '_config'
     static String ARGLINES = '_argLines'
     static String SUFFIXES = '_suffixes'
-    BackwardsCompatibleJavaExecActionFactory factory
 
     @Override
     void execute(Test t) {
-        def result = makeAction(t, factory).execute()
+        def result = makeAction(t).execute()
         if (result.exitValue != 0){
             handleTestFailures(t)
         }
@@ -66,9 +66,8 @@ class ScalaTestAction implements Action<Test> {
     }
 
 
-    static JavaExecAction makeAction(Test t, BackwardsCompatibleJavaExecActionFactory factory) {
-        FileResolver fileResolver = t.getServices().get(FileResolver.class)
-        JavaExecAction javaExecHandleBuilder = factory.create(fileResolver)
+    static JavaExecAction makeAction(Test t) {
+        JavaExecAction javaExecHandleBuilder = DefaultExecActionFactory.root().newJavaExecAction()
         t.copyTo(javaExecHandleBuilder)
         javaExecHandleBuilder.setMain('org.scalatest.tools.Runner')
         javaExecHandleBuilder.setClasspath(t.getClasspath())
@@ -126,13 +125,15 @@ class ScalaTestAction implements Action<Test> {
     static String durations = 'D'
 
     static String reporting(Test t) {
-        '-o' + ((dropped(t) + color(t) + exceptions(t) + durations) as List).unique().sort().join('')
+        return '-o' + ((dropped(t) + color(t) + exceptions(t) + durations) as List).unique().sort().join('')
     }
 
     private static Iterable<String> getArgs(Test t) {
         List<String> args = new ArrayList<String>()
         // this represents similar behaviour to the existing JUnit test action
-        args.add(reporting(t))
+        if (t.testLogging.events) {
+            args.add(reporting(t))
+        }
         if (t.maxParallelForks == 0) {
             args.add('-PS')
         } else {
@@ -147,7 +148,7 @@ class ScalaTestAction implements Action<Test> {
             args.add('-R')
             args.add(t.getTestClassesDir().absolutePath.replace(' ', '\\ '))
         }
-        t.filter.includePatterns.each {
+        def appendTestPattern = { String it ->
             if (it.endsWith("Test") || it.endsWith("Spec") || it.endsWith("Suite")) {
                 args.add('-q')
             } else {
@@ -155,6 +156,10 @@ class ScalaTestAction implements Action<Test> {
             }
             args.add(it)
         }
+        if (t.filter.hasProperty('commandLineIncludePatterns')) {
+            t.filter.commandLineIncludePatterns.each { appendTestPattern(it) }
+        }
+        t.filter.includePatterns.each { appendTestPattern(it) }
         if (t.reports.getJunitXml().isEnabled()){
             args.add('-u')
             args.add(t.reports.getJunitXml().getEntryPoint().getAbsolutePath())
@@ -194,6 +199,7 @@ class ScalaTestAction implements Action<Test> {
             args.add('-q')
             args.add(it)
         }
+        assert args.every { it.length() > 0}
         return args
     }
 }

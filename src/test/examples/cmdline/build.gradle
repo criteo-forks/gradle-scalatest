@@ -8,10 +8,6 @@ buildscript {
     }
 }
 
-ext['com.github.maiflai.gradle-scalatest.mode'] = 'replaceOne'
-
-apply plugin: 'java'
-apply plugin: 'jacoco'
 apply plugin: 'com.github.maiflai.scalatest'
 
 repositories {

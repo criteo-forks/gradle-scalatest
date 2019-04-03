@@ -7,14 +7,10 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.api.tasks.util.PatternSet
 
 class Scalatest extends Test {
-    protected Scalatest(BackwardsCompatibleJavaExecActionFactory factory) {
+    public Scalatest() {
         this.group = 'verification'
         this.description = 'Run scalatest tests'
-        this.configure(this, factory ?: new BackwardsCompatibleJavaExecActionFactory(this.project.gradle.gradleVersion))
-    }
-
-    public Scalatest() {
-        this(null)
+        this.configure(this)
     }
 
     @Override
@@ -23,11 +19,12 @@ class Scalatest extends Test {
         // Don't run tests with regular runner
     }
 
-    protected static void configure(Test test, BackwardsCompatibleJavaExecActionFactory factory) {
+    protected static void configure(Test test) {
         test.maxParallelForks = Runtime.runtime.availableProcessors()
         //noinspection GroovyAssignabilityCheck
         test.actions = [
-                new ScalaTestAction(factory)
+                new JacocoTestAction(),
+                new ScalaTestAction()
         ]
         test.testLogging.exceptionFormat = TestExceptionFormat.SHORT
         test.extensions.add(ScalaTestAction.TAGS, new PatternSet())
@@ -47,6 +44,5 @@ class Scalatest extends Test {
         test.extensions.add("suffix", { String name -> suffixes.add(name) })
         test.extensions.add("suffixes", { String... name -> suffixes.addAll(name) })
         test.testLogging.events = TestLogEvent.values() as Set
-        test.reports.html.enabled = false
     }
 }

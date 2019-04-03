@@ -14,11 +14,9 @@ class JacocoTestActionIntegrationTest {
     void testReportsAreProduced() throws Exception {
         def launcher = setupBuild(new File('src/test/examples/jacoco'))
         launcher.forTasks('clean', 'test', 'jacocoTestReport').run()
-        // TODO: re-enable Jacoco.
-        // Problem may come from the tasks.test.dependsOn(scalatest) wich may override jacoco's one
-        // assertThat(new File('src/test/examples/jacoco/build/reports/jacoco/test/html'), isReport)
+        assertThat(new File('src/test/examples/jacoco/build/reports/jacoco/test/html'), isReport)
         assertThat(new File('src/test/examples/jacoco/build/reports/tests/test'), isReport)
-        assertThat(new File('src/test/examples/jacoco/build/test-results/scalatest/TEST-HelloSpec.xml'), isReadableFile)
+        assertThat(new File('src/test/examples/jacoco/build/test-results/test/TEST-HelloSpec.xml'), isReadableFile)
     }
 
     protected static BuildLauncher setupBuild(File projectRoot) {

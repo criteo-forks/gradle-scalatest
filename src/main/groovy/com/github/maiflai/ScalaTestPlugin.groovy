@@ -5,6 +5,9 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.scala.ScalaPlugin
 import org.gradle.api.tasks.testing.Test
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.gradle.api.tasks.util.PatternSet
 
 /**
  * Applies the Java & Scala Plugins
@@ -16,21 +19,20 @@ class ScalaTestPlugin implements Plugin<Project> {
     static enum Mode {
         replaceAll, replaceOne, append, prepend
     }
-    BackwardsCompatibleJavaExecActionFactory factory
 
     @Override
     void apply(Project t) {
         if (!t.plugins.hasPlugin(ScalaTestPlugin)) {
-            factory = new BackwardsCompatibleJavaExecActionFactory(t.gradle.gradleVersion)
+            t.plugins.apply(JavaPlugin)
             t.plugins.apply(ScalaPlugin)
             switch (getMode(t)) {
                 case Mode.replaceAll:
-                    t.tasks.withType(Test) { Scalatest.configure(it, factory) }
+                    t.tasks.withType(Test) { Scalatest.configure(it) }
                     break
                 case Mode.replaceOne:
                     t.tasks.withType(Test) {
                         if (it.name == JavaPlugin.TEST_TASK_NAME) {
-                            Scalatest.configure(it, factory)
+                            Scalatest.configure(it)
                         }
                     }
                     break

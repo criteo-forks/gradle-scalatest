@@ -5,7 +5,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "com.gradle.publish:plugin-publish-plugin:0.9.9"
+        classpath "com.gradle.publish:plugin-publish-plugin:0.10.1"
     }
 }
 plugins {
@@ -13,8 +13,8 @@ plugins {
 }
 
 apply plugin: 'com.gradle.plugin-publish'
-apply plugin: 'signing'
 apply plugin: 'maven'
+apply plugin: 'signing'
 apply plugin: 'groovy'
 
 group = 'com.github.maiflai'
@@ -33,23 +33,23 @@ repositories {
 dependencies {
     compile gradleApi()
     compile localGroovy()
+    compile 'org.codehaus.plexus:plexus-utils:3.1.0'
     testCompile 'junit:junit:4.12'
 }
 
 task groovydocJar(type: Jar, dependsOn: groovydoc) {
-    classifier = 'groovydoc'
     from "$buildDir/docs/groovydoc"
+    archiveClassifier = 'groovydoc'
 }
 
 task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
-    classifier = 'sources'
+    archiveClassifier = 'sources'
 }
 
 test.dependsOn(jar)
 
 artifacts {
-    archives jar
     archives groovydocJar
     archives sourcesJar
 }
