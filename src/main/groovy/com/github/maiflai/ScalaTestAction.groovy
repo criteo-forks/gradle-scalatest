@@ -1,9 +1,9 @@
 package com.github.maiflai
 
 import groovy.transform.Immutable
+import org.codehaus.plexus.util.cli.CommandLineUtils
 import org.gradle.api.Action
 import org.gradle.api.GradleException
-import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.logging.configuration.ConsoleOutput
 import org.gradle.api.reporting.DirectoryReport
 import org.gradle.api.tasks.testing.Test
@@ -11,9 +11,6 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.api.tasks.util.PatternSet
 import org.gradle.internal.UncheckedException
-import org.gradle.process.internal.DefaultExecActionFactory
-import org.gradle.process.internal.JavaExecAction
-import org.codehaus.plexus.util.cli.CommandLineUtils
 
 /**
  * <p>Designed to replace the normal Test Action with a new JavaExecAction
@@ -32,7 +29,14 @@ class ScalaTestAction implements Action<Test> {
 
     @Override
     void execute(Test t) {
-        def result = makeAction(t).execute()
+        def result = t.project.javaexec { javaExec ->
+            main = 'org.scalatest.tools.Runner'
+            classpath = t.classpath
+            jvmArgs = t.allJvmArgs
+            args = getArgs(t)
+            ignoreExitValue = true
+            t.copyTo(javaExec)
+        }
         if (result.exitValue != 0){
             handleTestFailures(t)
         }
@@ -63,18 +67,6 @@ class ScalaTestAction implements Action<Test> {
         } catch (URISyntaxException e) {
             throw UncheckedException.throwAsUncheckedException(e)
         }
-    }
-
-
-    static JavaExecAction makeAction(Test t) {
-        JavaExecAction javaExecHandleBuilder = DefaultExecActionFactory.root().newJavaExecAction()
-        t.copyTo(javaExecHandleBuilder)
-        javaExecHandleBuilder.setMain('org.scalatest.tools.Runner')
-        javaExecHandleBuilder.setClasspath(t.getClasspath())
-        javaExecHandleBuilder.setJvmArgs(t.getAllJvmArgs())
-        javaExecHandleBuilder.setArgs(getArgs(t))
-        javaExecHandleBuilder.setIgnoreExitValue(true)
-        return javaExecHandleBuilder
     }
 
     static Set<TestLogEvent> other(Set<TestLogEvent> required) {
