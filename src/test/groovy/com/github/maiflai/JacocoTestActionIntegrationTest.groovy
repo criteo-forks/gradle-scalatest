@@ -14,8 +14,9 @@ class JacocoTestActionIntegrationTest {
     void testReportsAreProduced() throws Exception {
         def launcher = setupBuild(new File('src/test/examples/jacoco'))
         launcher.forTasks('clean', 'test', 'jacocoTestReport').run()
-        assertThat(new File('src/test/examples/jacoco/build/reports/jacoco/test/html'), isReport)
-        assertThat(new File('src/test/examples/jacoco/build/reports/tests/test'), isReport)
+        // Test reports are disabled.
+        // assertThat(new File('src/test/examples/jacoco/build/reports/jacoco/test/html'), isReport)
+        // assertThat(new File('src/test/examples/jacoco/build/reports/tests/test'), isReport)
         assertThat(new File('src/test/examples/jacoco/build/test-results/test/TEST-HelloSpec.xml'), isReadableFile)
     }
 

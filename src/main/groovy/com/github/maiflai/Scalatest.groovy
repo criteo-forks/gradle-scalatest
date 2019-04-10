@@ -44,5 +44,6 @@ class Scalatest extends Test {
         test.extensions.add("suffix", { String name -> suffixes.add(name) })
         test.extensions.add("suffixes", { String... name -> suffixes.addAll(name) })
         test.testLogging.events = TestLogEvent.values() as Set
+        test.reports.html.enabled = false
     }
 }
